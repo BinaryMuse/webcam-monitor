@@ -1,0 +1,11 @@
+{
+  "name": "webcam-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Michelle Tilley <michelle@michelletilley.net>",
+  "license": "MIT"
+}
