@@ -1,0 +1,52 @@
+<style>
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  #video {
+    width: 100%;
+    height: 100vh;
+    background-color: black;
+  }
+</style>
+
+<script type='text/javascript'>
+const {ipcRenderer} = require('electron')
+
+ipcRenderer.on('select-camera', handleSelectCamera)
+ipcRenderer.send('query-selected-camera')
+
+function handleSelectCamera (event, cameraId) {
+  if (!cameraId) {
+    video.src = ''
+    return
+  }
+
+  navigator.webkitGetUserMedia({
+    audio: false,
+    video: {
+      optional: [{sourceId: cameraId}],
+      maxWidth: 640,
+      maxHeight: 480
+    }
+  }, stream => {
+    const vid = document.getElementById('video')
+    vid.src = URL.createObjectURL(stream)
+    vid.play()
+  }, err => {
+    console.error(err)
+  })
+}
+
+navigator.mediaDevices.enumerateDevices().then(devices => {
+  const cams = devices
+    .filter(d => d.kind === 'videoinput')
+    .map(d => ({label: d.label, deviceId: d.deviceId}))
+  ipcRenderer.send('update-camera-list', cams)
+})
+</script>
+
+<body style="-webkit-app-region: drag">
+  <video id='video'>
+</body>
